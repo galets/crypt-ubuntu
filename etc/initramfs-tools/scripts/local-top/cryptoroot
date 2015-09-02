@@ -1,0 +1,30 @@
+PREREQ="udev"
+DRIVEUUID=???
+
+prereqs()
+{
+        echo "$PREREQ"
+}
+
+case "$1" in
+# get pre-requisites
+prereqs)
+        prereqs
+        exit 0
+        ;;
+esac
+
+modprobe dm_crypt
+modprobe sha256
+
+# The following command will ensure that the kernel is aware of
+# the partition before we attempt to open it with cryptsetup.
+/sbin/udevadm settle
+
+if grep -q splash /proc/cmdline; then
+    /bin/chvt 1
+fi
+
+cryptsetup luksOpen /dev/disk/by-uuid/$DRIVEUUID cryptroot 
+/sbin/udevadm settle
+
