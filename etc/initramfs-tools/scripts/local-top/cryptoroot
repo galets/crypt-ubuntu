@@ -1,5 +1,5 @@
 PREREQ="udev"
-DRIVEUUID=???
+DRIVEUUID=/dev/disk/by-partlabel/CRYPTROOT
 
 prereqs()
 {
@@ -22,9 +22,14 @@ modprobe sha256
 /sbin/udevadm settle
 
 if grep -q splash /proc/cmdline; then
-    /bin/chvt 1
+	plymouth --hide-splash
 fi
 
+/bin/chvt 1
+echo ""
+echo ""
+echo "------------------------------------------------"
 cryptsetup luksOpen /dev/disk/by-uuid/$DRIVEUUID cryptroot 
+
 /sbin/udevadm settle
 
